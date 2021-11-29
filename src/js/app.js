@@ -3,7 +3,7 @@ import './plugins';
 import locations from "./store/location";
 import formUI from './views/form';
 import currencyUI from './views/currency'
-
+import ticketsUI from './views/tickets'
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -19,18 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handlers
     async function initApp() {
         await locations.init();
-        formUI.setAutoCompleteData(locations.shortCitiesList);
+        formUI.setAutoCompleteData(locations.shortCities);
     }
 
     async function onFormSubmit() {
         // Собрать данные из инпутов
-        const origin = locations.getCityCodeByKey(formUI.originValue);
-        const destination = locations.getCityCodeByKey(formUI.destinationValue);
+        const origin = locations.getCityCodeByCityFullName(formUI.originValue);
+        const destination = locations.getCityCodeByCityFullName(formUI.destinationValue);
         const depart_date = formUI.departDateValue;
         const return_date = formUI.returnDateValue;
         const currency = currencyUI.currencyValue;
-
-        console.log(origin, destination, depart_date, return_date, currency);
         
         await locations.fetchTickets({
             origin,
@@ -38,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
             depart_date,
             return_date,
             currency,
-        })
+        });
+
+        ticketsUI.renderTickets(locations.lastSearch);
     }
 })
